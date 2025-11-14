@@ -86,12 +86,38 @@
     };
 
     noBtn.onclick = () => {
-      let yesSize = yesBtn.getBoundingClientRect();
-      let noSize = noBtn.getBoundingClientRect();
+      // Resize buttons (Sí crece, No se achica)
+      let yesRect = yesBtn.getBoundingClientRect();
+      let noRect = noBtn.getBoundingClientRect();
 
-      yesBtn.style.transform = `scale(${(yesSize.width / 100) + 0.05})`;
-      noBtn.style.transform = `scale(${Math.max((noSize.width / 100) - 0.03, 0.6)})`;
+      // Sí se hace más grande
+      yesBtn.style.transform = `scale(${(yesRect.width / 100) + 0.05})`;
 
+      // No se hace más pequeño
+      noBtn.style.transform = `scale(${Math.max((noRect.width / 100) - 0.03, 0.4)})`;
+
+      // Move NO to random position without overlapping
+      const bodyWidth = window.innerWidth;
+      const bodyHeight = window.innerHeight;
+
+      const yesBox = yesBtn.getBoundingClientRect();
+
+      let x, y;
+      do {
+        x = Math.random() * (bodyWidth - noRect.width);
+        y = Math.random() * (bodyHeight - noRect.height);
+      } while (
+        !(x + noRect.width < yesBox.left ||
+          x > yesBox.right ||
+          y + noRect.height < yesBox.top ||
+          y > yesBox.bottom)
+      );
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+
+      // Show message
       mensaje.innerHTML = frases[Math.floor(Math.random() * frases.length)];
     };
   </script>
