@@ -74,7 +74,7 @@
     let yesScale = 1;
     let noScale = 1;
 
-    const frases = [
+    let frases = [
       "En serio lo lamento :c",
       "De verdad fue tan grave lo que hice? :(",
       "Prometo mejorar...",
@@ -143,7 +143,15 @@
         { duration: 300, easing: 'ease-out' }
       );
 
-      mensaje.innerHTML = frases[Math.floor(Math.random() * frases.length)];
+      // Obtener frase sin repetir
+      if (frases.length > 0) {
+        const index = Math.floor(Math.random() * frases.length);
+        mensaje.innerHTML = frases[index];
+        frases.splice(index, 1);
+      } else {
+        mensaje.innerHTML = "Ya no tengo más excusas... 😔";
+        noBtn.style.display = "none";
+      }
     };
   </script>
 
