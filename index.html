@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Me perdonas?</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #ffe6f2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff4d88;
+      font-size: 2.3rem;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    #yesBtn {
+      background-color: #ff99c8;
+    }
+
+    #noBtn {
+      background-color: #b3b3b3;
+    }
+
+    #mensaje {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #000;
+      min-height: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>¿Me perdonas? 🥺</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Sí</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <div id="mensaje"></div>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const mensaje = document.getElementById('mensaje');
+
+    const frases = [
+      "En serio lo lamento :c",
+      "De verdad fue tan grave lo que hice? :(",
+      "Prometo mejorar...",
+      "No me odies :c",
+      "Te juro que puedo cambiar 😔",
+      "Piensa en todos los buenos momentos...",
+      "Ándaleee, perdóname :')"
+    ];
+
+    yesBtn.onclick = () => {
+      mensaje.innerHTML = "¡Yay! Sabía que me perdonarías 💖";
+      yesBtn.style.fontSize = "2rem";
+    };
+
+    noBtn.onclick = () => {
+      let yesSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+      let noSize = parseFloat(window.getComputedStyle(noBtn).fontSize);
+
+      yesBtn.style.fontSize = (yesSize + 4) + "px";
+      noBtn.style.fontSize = Math.max(noSize - 2, 10) + "px";
+
+      mensaje.innerHTML = frases[Math.floor(Math.random() * frases.length)];
+    };
+  </script>
+
+</body>
+</html>
