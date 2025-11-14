@@ -86,11 +86,11 @@
     };
 
     noBtn.onclick = () => {
-      let yesSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-      let noSize = parseFloat(window.getComputedStyle(noBtn).fontSize);
+      let yesSize = yesBtn.getBoundingClientRect();
+      let noSize = noBtn.getBoundingClientRect();
 
-      yesBtn.style.fontSize = (yesSize + 4) + "px";
-      noBtn.style.fontSize = Math.max(noSize - 2, 10) + "px";
+      yesBtn.style.transform = `scale(${(yesSize.width / 100) + 0.05})`;
+      noBtn.style.transform = `scale(${Math.max((noSize.width / 100) - 0.03, 0.6)})`;
 
       mensaje.innerHTML = frases[Math.floor(Math.random() * frases.length)];
     };
