@@ -70,6 +70,10 @@
     const noBtn = document.getElementById('noBtn');
     const mensaje = document.getElementById('mensaje');
 
+    // Escalas controladas (valores numéricos para evitar depender de fontSize/width)
+    let yesScale = 1;
+    let noScale = 1;
+
     const frases = [
       "En serio lo lamento :c",
       "De verdad fue tan grave lo que hice? :(",
@@ -80,32 +84,45 @@
       "Ándaleee, perdóname :')"
     ];
 
+    // Cuando el usuario presione SÍ (solo confirma)
     yesBtn.onclick = () => {
       mensaje.innerHTML = "¡Yay! Sabía que me perdonarías 💖";
-      yesBtn.style.fontSize = "2rem";
+      // pequeño efecto de pulse al confirmar
+      yesBtn.animate(
+        [
+          { transform: `scale(${yesScale})` },
+          { transform: `scale(${yesScale + 0.12})` },
+          { transform: `scale(${yesScale})` }
+        ],
+        { duration: 350, easing: 'ease-out' }
+      );
     };
 
+    // Cuando el usuario presione NO
     noBtn.onclick = () => {
-      // Resize buttons (Sí crece, No se achica)
-      let yesRect = yesBtn.getBoundingClientRect();
-      let noRect = noBtn.getBoundingClientRect();
+      // Incrementar la escala de SÍ
+      yesScale = +(yesScale + 0.08).toFixed(3);
+      yesBtn.style.transform = `scale(${yesScale})`;
 
-      // Sí se hace más grande
-      yesBtn.style.transform = `scale(${(yesRect.width / 100) + 0.05})`;
+      // Reducir la escala de NO (hasta un mínimo)
+      noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
+      noBtn.style.transform = `scale(${noScale})`;
 
-      // No se hace más pequeño
-      noBtn.style.transform = `scale(${Math.max((noRect.width / 100) - 0.03, 0.4)})`;
+      // Obtener tamaños reales después de aplicar transform
+      const noRect = noBtn.getBoundingClientRect();
+      const yesBox = yesBtn.getBoundingClientRect();
 
-      // Move NO to random position without overlapping
+      // Mover NO a posición aleatoria sin solaparse con SÍ
       const bodyWidth = window.innerWidth;
       const bodyHeight = window.innerHeight;
 
-      const yesBox = yesBtn.getBoundingClientRect();
-
-      let x, y;
+      let x, y, attempts = 0;
       do {
         x = Math.random() * (bodyWidth - noRect.width);
-        y = Math.random() * (bodyHeight - noRect.height);
+        y = Math.random() * (bodyHeight - noRect.height - 20) + 10; // margen superior/inferior
+        attempts++;
+        // si no encuentra tras muchos intentos, rompe para evitar bucle infinito
+        if (attempts > 200) break;
       } while (
         !(x + noRect.width < yesBox.left ||
           x > yesBox.right ||
@@ -117,7 +134,15 @@
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
-      // Show message
+      // Añadir efecto visual de teletransporte y mensaje
+      noBtn.animate(
+        [
+          { opacity: 0, transform: `scale(${noScale + 0.2})` },
+          { opacity: 1, transform: `scale(${noScale})` }
+        ],
+        { duration: 300, easing: 'ease-out' }
+      );
+
       mensaje.innerHTML = frases[Math.floor(Math.random() * frases.length)];
     };
   </script>
