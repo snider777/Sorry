@@ -86,16 +86,23 @@
 
     // Cuando el usuario presione SÍ (solo confirma)
     yesBtn.onclick = () => {
-      mensaje.innerHTML = "¡Yay! Sabía que me perdonarías 💖";
-      // pequeño efecto de pulse al confirmar
-      yesBtn.animate(
-        [
-          { transform: `scale(${yesScale})` },
-          { transform: `scale(${yesScale + 0.12})` },
-          { transform: `scale(${yesScale})` }
-        ],
-        { duration: 350, easing: 'ease-out' }
-      );
+      // Ocultar botón Sí
+      yesBtn.style.display = "none";
+
+      // Ocultar botón No si aún existe
+      noBtn.style.display = "none";
+
+      // Mostrar mensaje final
+      mensaje.innerHTML = "¡Yay! Sabía que me perdonarías 💖<br><br>";
+
+      // Agregar imagen debajo del texto
+      const img = document.createElement("img");
+      img.src = "imagen_final.png"; // Cambia por tu archivo
+      img.style.width = "180px";
+      img.style.marginTop = "10px";
+      img.style.animation = "aparecer 0.5s ease-out";
+
+      mensaje.appendChild(img);
     };
 
     // Cuando el usuario presione NO
