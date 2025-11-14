@@ -86,71 +86,72 @@
 
     // Cuando el usuario presione SÍ (solo confirma)
     yesBtn.onclick = () => {
-      // Ocultar botón Sí
+      // Ocultar botones
       yesBtn.style.display = "none";
-
-      // Ocultar botón No si aún existe
       noBtn.style.display = "none";
 
-      // Mostrar mensaje final
-      mensaje.innerHTML = "¡Yay! Sabía que me perdonarías 💖<br><br>";
+      // Ocultar pregunta y carita
+      const titulo = document.querySelector('h1');
+      if (titulo) titulo.style.display = "none";
 
-      // Agregar imagen debajo del texto
+      // Fondo blanco
+      document.body.style.background = "#ffffff";
+
+      // Mostrar mensaje final
+      mensaje.innerHTML = "<br>¡Yay! Sabía que me perdonarías 💖<br><br>";
+
+      // Agregar imagen encima del texto
       const img = document.createElement("img");
-      img.src = "imagen_final.png"; // Cambia por tu archivo
+      img.src = "imagen_final.png";
       img.style.width = "180px";
-      img.style.marginTop = "10px";
+      img.style.display = "block";
+      img.style.margin = "0 auto 15px auto";
       img.style.animation = "aparecer 0.5s ease-out";
 
-      mensaje.appendChild(img);
+      mensaje.prepend(img);
     };
 
     // Cuando el usuario presione NO
     noBtn.onclick = () => {
-      // Incrementar la escala de SÍ
+      // Incrementar escala de SÍ
       yesScale = +(yesScale + 0.08).toFixed(3);
       yesBtn.style.transform = `scale(${yesScale})`;
 
-      // Reducir la escala de NO (hasta un mínimo)
+      // Reducir escala de NO
       noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
       noBtn.style.transform = `scale(${noScale})`;
 
-      // Obtener tamaños reales después de aplicar transform
+      // Fondo rosa cada vez más oscuro
+      let current = document.body.dataset.pinkLevel ? Number(document.body.dataset.pinkLevel) : 220;
+      current = Math.max(current - 8, 120);
+      document.body.dataset.pinkLevel = current;
+      document.body.style.background = `rgb(255, ${current}, ${current})`;
+
+      // Mover NO aleatoriamente
       const noRect = noBtn.getBoundingClientRect();
       const yesBox = yesBtn.getBoundingClientRect();
-
-      // Mover NO a posición aleatoria sin solaparse con SÍ
       const bodyWidth = window.innerWidth;
       const bodyHeight = window.innerHeight;
 
       let x, y, attempts = 0;
       do {
         x = Math.random() * (bodyWidth - noRect.width);
-        y = Math.random() * (bodyHeight - noRect.height - 20) + 10; // margen superior/inferior
+        y = Math.random() * (bodyHeight - noRect.height - 20) + 10;
         attempts++;
-        // si no encuentra tras muchos intentos, rompe para evitar bucle infinito
         if (attempts > 200) break;
-      } while (
-        !(x + noRect.width < yesBox.left ||
-          x > yesBox.right ||
-          y + noRect.height < yesBox.top ||
-          y > yesBox.bottom)
-      );
+      } while (!(x + noRect.width < yesBox.left || x > yesBox.right || y + noRect.height < yesBox.top || y > yesBox.bottom));
 
       noBtn.style.position = "absolute";
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
-      // Añadir efecto visual de teletransporte y mensaje
-      noBtn.animate(
-        [
-          { opacity: 0, transform: `scale(${noScale + 0.2})` },
-          { opacity: 1, transform: `scale(${noScale})` }
-        ],
-        { duration: 300, easing: 'ease-out' }
-      );
+      // Teletransporte visual
+      noBtn.animate([
+        { opacity: 0, transform: `scale(${noScale + 0.2})` },
+        { opacity: 1, transform: `scale(${noScale})` }
+      ], { duration: 300, easing: 'ease-out' });
 
-      // Obtener frase sin repetir
+      // Frase sin repetir
       if (frases.length > 0) {
         const index = Math.floor(Math.random() * frases.length);
         mensaje.innerHTML = frases[index];
