@@ -58,7 +58,7 @@
 
   <h1>Me perdonas??? :c</h1>
 
-  <div class="buttons">
+  <div class="buttons" id="btnContainer">
     <button id="yesBtn">Sí</button>
     <button id="noBtn">No</button>
   </div>
@@ -70,6 +70,7 @@
     const noBtn = document.getElementById('noBtn');
     const mensaje = document.getElementById('mensaje');
     const titulo = document.querySelector("h1");
+    const contenedor = document.getElementById("btnContainer");
 
     let yesScale = 1;
     let noScale = 1;
@@ -95,23 +96,18 @@
       "Jajksajk ... Me perdonas??? :)"
     ];
 
-    // --- Configuración del intercambio ---
     let clicksNo = 0;
     const triggerSwapClicks = 8;
 
-    let intercambioActivo = false; 
-    let intercambioHecho = false;
-
-    // Guardar posiciones originales
-    let posOriginalYes = null;
-    let posOriginalNo = null;
+    let intercambioActivo = false;  
+    let guardadoYes = null;
+    let guardadoNo = null;
 
     // --- Botón SÍ ---
     yesBtn.onclick = () => {
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
-      if (titulo) titulo.style.display = "none";
-
+      titulo.style.display = "none";
       document.body.style.background = "#ffffff";
 
       mensaje.innerHTML = "<br>Jjaksjkasj ... Sabía que me perdonarías te quiero mucho <3 ...<br><br>";
@@ -129,71 +125,44 @@
     noBtn.onclick = () => {
       clicksNo++;
 
-      // ----- INTERCAMBIO -----
+      // -------------- INTERCAMBIO --------------
       if (clicksNo === triggerSwapClicks) {
 
         if (!intercambioActivo) {
-          // Guardar posiciones iniciales
-          const yesPos = yesBtn.getBoundingClientRect();
-          const noPos = noBtn.getBoundingClientRect();
+          // Guardar contenido original
+          guardadoYes = yesBtn.cloneNode(true);
+          guardadoNo = noBtn.cloneNode(true);
 
-          posOriginalYes = yesPos;
-          posOriginalNo = noPos;
-
-          // Intercambiar escalas
-          const tempScale = yesScale;
-          yesScale = noScale;
-          noScale = tempScale;
-
-          yesBtn.style.transform = `scale(${yesScale})`;
-          noBtn.style.transform = `scale(${noScale})`;
-
-          // Colocar posiciones intercambiadas
-          yesBtn.style.position = "absolute";
-          noBtn.style.position = "absolute";
-
-          yesBtn.style.left = `${noPos.left}px`;
-          yesBtn.style.top = `${noPos.top}px`;
-
-          noBtn.style.left = `${yesPos.left}px`;
-          noBtn.style.top = `${yesPos.top}px`;
+          // Intercambiar DOM
+          contenedor.insertBefore(noBtn, yesBtn);
 
           intercambioActivo = true;
 
         } else {
-          // Revertir intercambio
+          // Revertir DOM
+          contenedor.innerHTML = "";
+          contenedor.appendChild(guardadoYes);
+          contenedor.appendChild(guardadoNo);
 
-          yesBtn.style.left = `${posOriginalYes.left}px`;
-          yesBtn.style.top = `${posOriginalYes.top}px`;
+          // Volver a asignar referencias
+          const newYes = document.getElementById("yesBtn");
+          const newNo = document.getElementById("noBtn");
 
-          noBtn.style.left = `${posOriginalNo.left}px`;
-          noBtn.style.top = `${posOriginalNo.top}px`;
-
-          // Revertir escalas
-          const tempScale = yesScale;
-          yesScale = noScale;
-          noScale = tempScale;
-
-          yesBtn.style.transform = `scale(${yesScale})`;
-          noBtn.style.transform = `scale(${noScale})`;
+          yesBtn.onclick = newYes.onclick;
+          noBtn.onclick = newNo.onclick;
 
           intercambioActivo = false;
         }
 
-        return; // ← IMPORTANTE: evita que muestre frase repetida
+        return; // ← evita repetición de frase
       }
 
-      // ----- COMPORTAMIENTO NORMAL -----
+      // -------------- COMPORTAMIENTO NORMAL --------------
       yesScale = +(yesScale + 0.08).toFixed(3);
       yesBtn.style.transform = `scale(${yesScale})`;
 
       noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
       noBtn.style.transform = `scale(${noScale})`;
-
-      let current = document.body.dataset.pinkLevel ? Number(document.body.dataset.pinkLevel) : 220;
-      current = Math.max(current - 8, 120);
-      document.body.dataset.pinkLevel = current;
-      document.body.style.background = `rgb(255, ${current}, ${current})`;
 
       // Movimiento aleatorio
       const noRect = noBtn.getBoundingClientRect();
@@ -206,8 +175,8 @@
         x = Math.random() * (width - noRect.width);
         y = Math.random() * (height - noRect.height - 20) + 10;
         tries++;
-        if (tries > 200) break;
       } while (
+        tries < 200 &&
         !(x + noRect.width < yesRect.left ||
           x > yesRect.right ||
           y + noRect.height < yesRect.top ||
@@ -218,15 +187,7 @@
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
-      noBtn.animate(
-        [
-          { opacity: 0, transform: `scale(${noScale + 0.2})` },
-          { opacity: 1, transform: `scale(${noScale})` }
-        ],
-        { duration: 300 }
-      );
-
-      // Mostrar frases sin repetir
+      // Mostrar frase sin repeticiones
       if (frases.length > 0) {
         mensaje.innerHTML = frases.shift();
       } else {
