@@ -5,18 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>¿Me perdonas?</title>
   <style>
-    /* ----- Estilos generales ----- */
-    :root{
-      --bg-pink: 255;
-    }
-    html,body{
-      height:100%;
-      margin:0;
-      padding:0;
-    }
     body {
       font-family: 'Arial', sans-serif;
-      background: rgb(255, var(--bg-pink), var(--bg-pink));
+      background: #ffe6f2;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -24,22 +15,18 @@
       height: 100vh;
       margin: 0;
       text-align: center;
-      overflow: hidden;
     }
 
     h1 {
       color: #ff4d88;
       font-size: 2.3rem;
       margin-bottom: 30px;
-      transition: transform 0.15s ease;
     }
 
     .buttons {
       display: flex;
       gap: 20px;
       margin-bottom: 20px;
-      position: relative;
-      z-index: 10;
     }
 
     button {
@@ -48,80 +35,46 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      position: relative;
-      user-select: none;
+      transition: 0.2s ease;
     }
 
     #yesBtn {
       background-color: #ff99c8;
-      color: #111;
     }
 
     #noBtn {
       background-color: #b3b3b3;
-      color: #111;
     }
 
     #mensaje {
       margin-top: 20px;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       color: #000;
-      min-height: 44px;
-      width: 80%;
-      max-width: 600px;
-      line-height: 1.3;
-    }
-
-    /* Pequeña animación al hacer appear */
-    .pop {
-      animation: pop 220ms ease;
-    }
-    @keyframes pop {
-      from { transform: scale(0.9); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
-
-    /* Para que los botones no se solapen visualmente si se mueven */
-    #stage {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      min-height: 30px;
     }
   </style>
 </head>
 <body>
 
-  <h1 id="titulo">Me perdonas??? :c</h1>
+  <h1>Me perdonas??? :c</h1>
 
-  <div style="position:relative; z-index:20;">
-    <div class="buttons" id="btnWrapper">
-      <button id="yesBtn">Sí</button>
-      <button id="noBtn">No</button>
-    </div>
-
-    <div id="mensaje"></div>
+  <div class="buttons" id="btnBox">
+    <button id="yesBtn">Sí</button>
+    <button id="noBtn">No</button>
   </div>
 
-  <div id="stage"></div>
+  <div id="mensaje"></div>
 
   <script>
-    // ---------------------
-    // Elementos del DOM
-    // ---------------------
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const mensaje = document.getElementById('mensaje');
-    const titulo = document.getElementById('titulo');
-    const btnWrapper = document.getElementById('btnWrapper');
+    const titulo = document.querySelector("h1");
+    const btnBox = document.getElementById("btnBox");
 
-    // ---------------------
-    // Variables de estado
-    // ---------------------
     let yesScale = 1;
     let noScale = 1;
 
-    // Lista original de frases (se mostrarán en orden)
     let frases = [
       "En serio lo lamento :c",
       "Fue tan grave lo que hice??? :c",
@@ -143,80 +96,63 @@
       "Jajksajk ... Me perdonas??? :)"
     ];
 
-    // Contador de clicks en NO
     let clicksNo = 0;
 
-    // Guardamos el orden original de botones para poder restaurarlo
-    // (usamos referencias a los nodos, no clones, para mantener listeners)
-    const ordenOriginal = [yesBtn, noBtn];
+    // Guardamos el orden original de los botones
+    const ordenOriginal = [...btnBox.children];
 
-    // ---------------------
-    // Utilidades
-    // ---------------------
-    function mostrarFraseSiguiente(){
-      if (frases.length > 0) {
-        mensaje.textContent = frases.shift();
-      } else {
-        mensaje.textContent = "Esta era mi última opción jajaja ...";
-      }
-      mensaje.classList.remove('pop');
-      // reflow para reiniciar animación
-      void mensaje.offsetWidth;
-      mensaje.classList.add('pop');
+    // Función para intercambiar o restaurar botones
+    function swapButtons() {
+      const actual = [...btnBox.children];
+      btnBox.innerHTML = "";
+      btnBox.append(actual[1], actual[0]);
     }
 
-    // Inserta botones en el wrapper en el orden que le pases (array de nodos)
-    function establecerOrden(enArray){
-      // eliminar todos y volver a insertar en el orden dado
-      while (btnWrapper.firstChild) btnWrapper.removeChild(btnWrapper.firstChild);
-      enArray.forEach(nodo => btnWrapper.appendChild(nodo));
-    }
-
-    // ---------------------
-    // Manejo del botón SÍ
-    // ---------------------
-    yesBtn.addEventListener('click', () => {
-      // Ocultar botones y cambiar fondo
+    yesBtn.onclick = () => {
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
-      if (titulo) titulo.style.display = "none";
+      titulo.style.display = "none";
 
       document.body.style.background = "#ffffff";
-      mensaje.innerHTML = "<br>Jjaksjkasj ... Sabía que me perdonarías te quiero mucho <3 ...<br><br>";
+
+      mensaje.innerHTML =
+        "<br>Jjaksjkasj ... Sabía que me perdonarías te quiero mucho <3 ...<br><br>";
 
       const img = document.createElement("img");
-      img.src = "imagen_final.png"; // asegúrate de tener este recurso en la ruta
+      img.src = "imagen_final.png";
       img.style.width = "180px";
       img.style.display = "block";
       img.style.margin = "0 auto 15px auto";
 
       mensaje.prepend(img);
-    });
+    };
 
-    // ---------------------
-    // Manejo del botón NO
-    // ---------------------
-    noBtn.addEventListener('click', (e) => {
+    noBtn.onclick = () => {
       clicksNo++;
 
-      // 1) Escalados y efecto visual (como en tu código original)
+      // --- 1. FRASES SIN REPETIR ---
+      if (frases.length > 0) {
+        mensaje.textContent = frases.shift();
+      } else {
+        mensaje.textContent = "Esta era mi última opción jajaja ...";
+      }
+
+      // --- 2. ESCALAS ---
       yesScale = +(yesScale + 0.08).toFixed(3);
       yesBtn.style.transform = `scale(${yesScale})`;
 
       noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
       noBtn.style.transform = `scale(${noScale})`;
 
-      // 2) Ajustar fondo rosado (nivel en variable CSS)
-      let current = document.body.dataset.pinkLevel ? Number(document.body.dataset.pinkLevel) : 220;
+      // --- 3. FONDO ---
+      let current = document.body.dataset.pinkLevel
+        ? Number(document.body.dataset.pinkLevel)
+        : 220;
       current = Math.max(current - 8, 120);
       document.body.dataset.pinkLevel = current;
-      document.documentElement.style.setProperty('--bg-pink', current);
+      document.body.style.background = `rgb(255, ${current}, ${current})`;
 
-      // 3) Mostrar la siguiente frase NORMALMENTE (solo UNA vez por click)
-      mostrarFraseSiguiente();
-
-      // 4) Movemos el botón NO a una posición aleatoria (evitando overlap)
-      //    Nota: usamos coordenadas relativas a la ventana y posicion absolute para el botón
+      // --- 4. MOVIMIENTO ALEATORIO NORMAL ---
       const noRect = noBtn.getBoundingClientRect();
       const yesRect = yesBtn.getBoundingClientRect();
       const width = window.innerWidth;
@@ -227,70 +163,39 @@
         x = Math.random() * (width - noRect.width);
         y = Math.random() * (height - noRect.height - 20) + 10;
         tries++;
-        if (tries > 250) break;
-        // Evitar colisión aproximada con el botón YES
-      } while (!(x + noRect.width < yesRect.left || x > yesRect.right || y + noRect.height < yesRect.top || y > yesRect.bottom));
+        if (tries > 200) break;
+      } while (
+        !(
+          x + noRect.width < yesRect.left ||
+          x > yesRect.right ||
+          y + noRect.height < yesRect.top ||
+          y > yesRect.bottom
+        )
+      );
 
-      // Asegurar el wrapper no fuerce layout raro: hacemos position absolute al botón NO
       noBtn.style.position = "absolute";
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
-      // Animación rápida de aparición
-      noBtn.animate([
-        { opacity: 0, transform: `scale(${noScale + 0.2})` },
-        { opacity: 1, transform: `scale(${noScale})` }
-      ], { duration: 260 });
+      noBtn.animate(
+        [
+          { opacity: 0, transform: `scale(${noScale + 0.2})` },
+          { opacity: 1, transform: `scale(${noScale})` }
+        ],
+        { duration: 300 }
+      );
 
-      // -------------------------
-      // 5) INTERCAMBIO EN 8 Y 9
-      // -------------------------
-      // Requisito: solo en clicksNo === 8 y clicksNo === 9
-      // - en 8: intercambiar posiciones (Sí <-> No)
-      // - en 9: restaurar al orden original
-      // Todo esto SIN interferir con la frase mostrada (ya ejecutada arriba)
-
+      // --- 5. INTERCAMBIO SOLO EN CLICK 8 Y 9 ---
       if (clicksNo === 8) {
-        // intercambiar: dejamos en el wrapper el orden invertido
-        establecerOrden([noBtn, yesBtn]);
-        // opcional: darle un pequeño "pop" visual al wrapper
-        btnWrapper.animate([{ transform: 'translateY(-6px)' }, { transform: 'translateY(0)' }], { duration: 180 });
-      } else if (clicksNo === 9) {
-        // restaurar orden original
-        establecerOrden(ordenOriginal);
-        btnWrapper.animate([{ transform: 'translateY(6px)' }, { transform: 'translateY(0)' }], { duration: 180 });
+        swapButtons();
       }
 
-      // Nota: clicks mayores a 9 no hacen intercambio (como pediste)
-    });
-
-    // ---------------------
-    // Compatibilidad al redimensionar (para que botones no queden fuera)
-    // ---------------------
-    window.addEventListener('resize', () => {
-      // Si alguno de los botones está posicionado absolute y quedó fuera del viewport,
-      // reposicionarlo de forma segura al centro superior.
-      [yesBtn, noBtn].forEach(btn => {
-        const r = btn.getBoundingClientRect();
-        if (r.right < 0 || r.left > window.innerWidth || r.bottom < 0 || r.top > window.innerHeight) {
-          // quitar posición absoluta y restaurar al contenedor en orden original
-          btn.style.position = "";
-          btn.style.left = "";
-          btn.style.top = "";
-          establecerOrden(ordenOriginal);
-        }
-      });
-    });
-
-    // ---------------------
-    // Inicialización: mostrar primer mensaje vacío (o uno introductorio)
-    // ---------------------
-    mensaje.textContent = "Haz clic en 'No' para ver qué pasa...";
-
-    // ---------------------
-    // Para evitar que el noBtn se desplace demasiado al inicio (opcional)
-    // ---------------------
-    // Lo dejamos sin posición absolute al principio; los movimientos lo transformarán.
+      if (clicksNo === 9) {
+        // Restaurar al orden original
+        btnBox.innerHTML = "";
+        ordenOriginal.forEach(btn => btnBox.append(btn));
+      }
+    };
   </script>
 
 </body>
