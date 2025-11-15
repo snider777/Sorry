@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>¿Me perdonas?</title>
+
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -15,7 +16,7 @@
       height: 100vh;
       margin: 0;
       text-align: center;
-      overflow: hidden;
+      overflow: hidden; /* evita desplazamiento */
     }
 
     h1 {
@@ -28,7 +29,7 @@
       display: flex;
       gap: 20px;
       margin-bottom: 20px;
-      position: relative;
+      position: static; /* importante */
     }
 
     button {
@@ -38,16 +39,17 @@
       border-radius: 12px;
       cursor: pointer;
       transition: 0.2s ease;
-      position: relative;
     }
 
     #yesBtn {
       background-color: #ff99c8;
     }
 
+    /* El NO se moverá con coordenadas absolutas respecto al body */
     #noBtn {
       background-color: #b3b3b3;
-      position: absolute;
+      position: fixed;
+      z-index: 9999;
     }
 
     #mensaje {
@@ -102,6 +104,7 @@
 
     let clicksNo = 0;
 
+    // Guardamos el orden original
     const ordenOriginal = [...btnBox.children];
 
     function swapButtons() {
@@ -114,7 +117,6 @@
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
       titulo.style.display = "none";
-
       document.body.style.background = "#ffffff";
 
       mensaje.innerHTML =
@@ -132,21 +134,21 @@
     noBtn.onclick = () => {
       clicksNo++;
 
-      // --- FRASES ---
+      // 1. Mostrar frases sin repetir
       if (frases.length > 0) {
         mensaje.textContent = frases.shift();
       } else {
         mensaje.textContent = "Esta era mi última opción jajaja ...";
       }
 
-      // --- ESCALAS ---
+      // 2. Escalas
       yesScale = +(yesScale + 0.08).toFixed(3);
       yesBtn.style.transform = `scale(${yesScale})`;
 
       noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
       noBtn.style.transform = `scale(${noScale})`;
 
-      // --- FONDO ---
+      // 3. Fondo
       let current = document.body.dataset.pinkLevel
         ? Number(document.body.dataset.pinkLevel)
         : 220;
@@ -154,60 +156,33 @@
       document.body.dataset.pinkLevel = current;
       document.body.style.background = `rgb(255, ${current}, ${current})`;
 
-      // --- MOVIMIENTO ARREGLADO: NO SE SALE NI SE PEGA ---
-      const noRect = noBtn.getBoundingClientRect();
+      // 4. Movimiento aleatorio del NO (sin solaparse con el SÍ)
       const yesRect = yesBtn.getBoundingClientRect();
+
       const width = window.innerWidth;
       const height = window.innerHeight;
 
-      const margen = 30;
-      const minX = 10;
-      const maxX = width - noRect.width - 10;
-      const minY = 10;
-      const maxY = height - noRect.height - 10;
-
       let x, y, tries = 0;
-
       do {
-        x = Math.random() * (maxX - minX) + minX;
-        y = Math.random() * (maxY - minY) + minY;
+        x = Math.random() * (width - noBtn.offsetWidth);
+        y = Math.random() * (height - noBtn.offsetHeight - 20) + 10;
         tries++;
-        if (tries > 200) break;
-
-        const noLeft = x;
-        const noRight = x + noRect.width;
-        const noTop = y;
-        const noBottom = y + noRect.height;
-
-        const yesLeft = yesRect.left - margen;
-        const yesRight = yesRect.right + margen;
-        const yesTop = yesRect.top - margen;
-        const yesBottom = yesRect.bottom + margen;
-
-        var seSolapa = !(
-          noRight < yesLeft ||
-          noLeft > yesRight ||
-          noBottom < yesTop ||
-          noTop > yesBottom
-        );
-
-      } while (seSolapa);
+        if (tries > 500) break; // seguridad
+      } while (
+        // Evita superposición
+        !(
+          x + noBtn.offsetWidth < yesRect.left ||
+          x > yesRect.right ||
+          y + noBtn.offsetHeight < yesRect.top ||
+          y > yesRect.bottom
+        )
+      );
 
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
 
-      noBtn.animate(
-        [
-          { opacity: 0, transform: `scale(${noScale + 0.2})` },
-          { opacity: 1, transform: `scale(${noScale})` }
-        ],
-        { duration: 300 }
-      );
-
-      // --- INTERCAMBIO 8 y 9 ---
-      if (clicksNo === 8) {
-        swapButtons();
-      }
+      // 5. Swap solo en 8 y 9
+      if (clicksNo === 8) swapButtons();
 
       if (clicksNo === 9) {
         btnBox.innerHTML = "";
