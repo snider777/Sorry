@@ -1,500 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>¿Me perdonas?</title>
   <style>
-    /* -----------------------
-       Estilos generales
-       ----------------------- */
-    :root {
-      --bg-pink: 238;
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: rgb(255, var(--bg-pink), var(--bg-pink));
+      font-family: 'Arial', sans-serif;
+      background: #ffe6f2;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 44px;
-      box-sizing: border-box;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding-top: 60px;
       overflow: hidden;
-      transition: background 180ms linear;
+      text-align: center;
     }
 
     h1 {
-      color: #ff4d88;
-      font-size: 2rem;
-      margin: 6px 0 22px 0;
-      user-select: none;
+      font-size: 28px;
+      color: #d63384;
+      margin-bottom: 40px;
+      max-width: 90%;
     }
 
-    /* wrapper para centrar y mantener layout */
-    #wrapper {
-      width: 100%;
-      max-width: 920px;
-      padding: 10px 20px;
-      box-sizing: border-box;
+    #buttonContainer {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* area donde estaban originalmente los botones */
-    #btnArea {
-      width: 100%;
-      display: flex;
-      gap: 18px;
-      align-items: center;
       justify-content: center;
-      margin-top: 8px;
-      /* no relative; el botón NO se posicionará respecto a viewport (fixed) */
+      align-items: center;
+      gap: 60px;
+      margin-top: 40px;
     }
 
     button {
-      font-size: 1.05rem;
-      padding: 12px 26px;
-      border-radius: 12px;
+      padding: 12px 28px;
+      font-size: 22px;
       border: none;
       cursor: pointer;
-      transition: transform 160ms ease, box-shadow 160ms ease;
-      user-select: none;
+      border-radius: 10px;
+      transition: 0.3s;
     }
 
     #yesBtn {
-      background: linear-gradient(180deg,#ff9fbf,#ff6ea4);
-      color: #111;
-      box-shadow: 0 6px 18px rgba(255,100,150,0.12);
+      background-color: #ff66b2;
+      color: white;
     }
 
-    /* El botón NO será fixed para moverse libremente por pantalla */
     #noBtn {
-      background: linear-gradient(180deg,#cfc6ff,#9ea6ff);
-      color: #111;
-      box-shadow: 0 6px 18px rgba(120,120,255,0.12);
-      position: fixed; /* muy importante: respecto a viewport */
-      z-index: 9999;
-      /* left/top se definirán en JS al iniciar */
+      background-color: #ff4d4d;
+      color: white;
+      position: relative;
     }
 
-    #mensaje {
-      margin-top: 26px;
-      width: 90%;
-      max-width: 780px;
-      min-height: 56px;
-      font-size: 1.05rem;
-      color: #111;
-      text-align: center;
-      line-height: 1.3;
+    button:hover {
+      transform: scale(1.12);
     }
 
-    /* pequeñas clases utilitarias */
-    .hidden { display: none !important; }
-    .pop { animation: pop 240ms ease both; }
-    @keyframes pop {
-      from { transform: scale(0.96); opacity: 0.0; } to { transform: scale(1); opacity: 1; }
-    }
-
-    /* Para dispositivos pequeños, reducimos paddings */
-    @media (max-width: 420px) {
-      button { padding: 10px 18px; font-size: 1rem; }
-      #mensaje { font-size: 1rem; }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
     }
   </style>
 </head>
+
 <body>
-  <div id="wrapper">
-    <h1 id="titulo">Me perdonas??? :c</h1>
 
-    <div id="btnArea">
-      <!-- yesBtn permanece en el flujo normal (no fixed) -->
-      <button id="yesBtn">Sí</button>
-      <!-- noBtn se posicionará con fixed; inicialmente lo colocamos ~al lado para que no "salte" -->
-      <button id="noBtn">No</button>
-    </div>
+  <h1 id="mainText">¿Me perdonas? 😔💗</h1>
 
-    <div id="mensaje">Haz clic en "No" para ver qué pasa...</div>
+  <div id="buttonContainer">
+    <button id="yesBtn">Sí</button>
+    <button id="noBtn">No</button>
   </div>
 
   <script>
-    /************************************************************************
-     * Variables DOM
-     ************************************************************************/
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const titulo = document.getElementById('titulo');
-    const mensaje = document.getElementById('mensaje');
-    const btnArea = document.getElementById('btnArea');
-    const root = document.documentElement;
-
-    /************************************************************************
-     * Estado y configuraciones
-     ************************************************************************/
-    let frases = [
-      "En serio lo lamento :c",
-      "No fue tan grave ... Me perdonas??? :c",
-      "Pq le sigues dando al no ... Perdóname ...",
-      "Ya basta :c",
-      "Please forgive me ... I really care about you :c",
-      "Ich mache das wirklich und mache es immer noch ... Tatsächlich habe ich es von Anfang an getan :)﻿",
-      "Okeeey ... Lo de hablar en otros idiomas tampoco te convence??? :c",
-      "Intentémos de nuevo ... Me perdonas??? :c",
-      "Jasjaskj no caíste en lo de cambiar los botones eh??? ... Admite que fue un buen intento :)... Me perdonas???",
-      "Todo el punto de este código es que me perdones :c ...Puedes hacerlo porfa :)???",
-      "Vamos ... Me alegrarías el día ... La semana ... El mes ... Y el resto del año skjkajs :)",
-      "Te lo pido una última vez ... Me perdonas??? :c",
-      "No lo pediré de nuevo ... Me perdonas???",
-      "En serio esta es la última vez ... Me perdonas???",
-      "Porfa hazlo ... Escribir cansa :c ... Me perdonas???",
-      "PORFAAAAAAAAAAAAAAAAAAAAAAAAAA ... Perdóname :c",
-      "Bueno no me dejas opción ... Me perdonas???",
-      "Jajksajk ... Me perdonas??? :)"
+    const frases = [
+      "¿Segura que no? 😢",
+      "Piénsalo bien... 🥺",
+      "Me pondré triste 😞",
+      "Muy muy triste 😣",
+      "Extremadamente triste 😖",
+      "¿No quieres verme feliz? 💔",
+      "De verdad no?... 😭",
+      "Ok ya me dolió... 💘"
     ];
 
-    let clicksNo = 0;
-    let yesScale = 1;
-    let noScale = 1;
+    let clickNo = 0;
+    let fraseIndex = 0;
 
-    const SWAP_CLICK_1 = 8;
-    const SWAP_CLICK_2 = 9;
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const mainText = document.getElementById("mainText");
+    const container = document.getElementById("buttonContainer");
 
-    // guardamos coordenadas originales (de ambos botones) respecto al viewport
-    // formato: { left: number, top: number, width: number, height: number }
-    let originalPos = { yes: null, no: null };
+    // POSICIONES NORMALES FIJAS (para evitar sobreposición)
+    let yesPos = { x: 0, y: 0 };
+    let noPos = { x: 0, y: 0 };
 
-    // Flag: indicamos si ya convertimos la UI para mover botones (pos fixed) por primera vez
-    let initializedFixed = false;
+    function setDefaultPositions() {
+      yesBtn.style.position = "relative";
+      noBtn.style.position = "relative";
 
-    // Flag: si actualmente están "swapped" visualmente
-    let currentlySwapped = false;
+      yesBtn.style.left = "0px";
+      yesBtn.style.top = "0px";
 
-    /************************************************************************
-     * UTIL: obtener rect relativo a viewport
-     ************************************************************************/
-    function getViewportRect(el) {
-      const r = el.getBoundingClientRect();
-      return { left: r.left, top: r.top, width: r.width, height: r.height, right: r.right, bottom: r.bottom };
+      noBtn.style.left = "0px";
+      noBtn.style.top = "0px";
     }
 
-    /************************************************************************
-     * Inicialización: colocamos el botón NO y guardamos posiciones originales
-     * - Queremos que el NO sea fixed para moverse libremente.
-     * - Para que visualmente no "salte", colocamos ambos botones (YES y NO)
-     *   en coordenadas absolutas (fixed) sobre su posición actual.
-     * - Guardamos esas posiciones para restaurar en el swap revert.
-     ************************************************************************/
-    function initFixedPositionsOnce() {
-      if (initializedFixed) return;
-      // tomar rects actuales
-      const yesRect = getViewportRect(yesBtn);
-      const noRect = getViewportRect(noBtn);
+    setDefaultPositions();
 
-      // almacenar originales
-      originalPos.yes = { left: yesRect.left, top: yesRect.top, width: yesRect.width, height: yesRect.height };
-      originalPos.no  = { left: noRect.left,  top: noRect.top,  width: noRect.width,  height: noRect.height };
+    function moveNoSafely() {
+      let offsetX = (Math.random() * 240 - 120);
+      let offsetY = (Math.random() * 160 - 80);
 
-      // fijar tamaño para evitar "shrink" al salir del flujo
-      yesBtn.style.width  = `${yesRect.width}px`;
-      yesBtn.style.height = `${yesRect.height}px`;
-      noBtn.style.width   = `${noRect.width}px`;
-      noBtn.style.height  = `${noRect.height}px`;
+      // Evitar que se acerque al SÍ más de 150px
+      let dx = offsetX;
+      let dy = offsetY;
 
-      // convertir yesBtn a fixed también (visual), pero lo dejamos con z-index menor
-      yesBtn.style.position = 'fixed';
-      yesBtn.style.left = `${yesRect.left}px`;
-      yesBtn.style.top  = `${yesRect.top}px`;
-      yesBtn.style.zIndex = 9998;
-
-      // ahora colocar noBtn fixed (ya lo es desde CSS) — actualizamos sus coords
-      noBtn.style.left = `${noRect.left}px`;
-      noBtn.style.top  = `${noRect.top}px`;
-      noBtn.style.zIndex = 9999;
-
-      initializedFixed = true;
-    }
-
-    /************************************************************************
-     * Mostrar siguiente frase sin repetir
-     ************************************************************************/
-    function showNextPhrase() {
-      if (frases.length > 0) {
-        mensaje.textContent = frases.shift();
-      } else {
-        mensaje.textContent = "Esta era mi última opción jajaja ...";
-      }
-      mensaje.classList.remove('pop');
-      void mensaje.offsetWidth;
-      mensaje.classList.add('pop');
-    }
-
-    /************************************************************************
-     * Helper: mantener coordenadas dentro de viewport (margen interior)
-     ************************************************************************/
-    function clampPositionWithinViewport(left, top, w, h, margin = 8) {
-      const maxLeft = Math.max(margin, window.innerWidth - w - margin);
-      const maxTop  = Math.max(margin, window.innerHeight - h - margin);
-      const finalLeft = Math.min(Math.max(left, margin), maxLeft);
-      const finalTop  = Math.min(Math.max(top, margin), maxTop);
-      return { left: finalLeft, top: finalTop };
-    }
-
-    /************************************************************************
-     * Mover NO aleatoriamente evitando superposición con YES
-     * - Usa sizes y escalas actuales.
-     * - Se asegura que NO esté completamente dentro de viewport.
-     ************************************************************************/
-    function moveNoAvoidYes() {
-      // Asegurarnos de haber inicializado coords fixed
-      initFixedPositionsOnce();
-
-      // recalcular rects (tamaños reales pueden haber cambiado por scales)
-      const yesRect = getViewportRect(yesBtn);
-      const noRect  = getViewportRect(noBtn);
-
-      // considerar escalas: cuando CSS transform scale cambia el visual size,
-      // getBoundingClientRect ya refleja la escala — por eso usamos getViewportRect.
-      const margin = 28; // separación mínima en px
-
-      // límites seguros (en viewport)
-      const minX = 8;
-      const maxX = Math.max(8, window.innerWidth - noRect.width - 8);
-      const minY = 8;
-      const maxY = Math.max(8, window.innerHeight - noRect.height - 8);
-
-      let x = noRect.left;
-      let y = noRect.top;
-      let tries = 0;
-      let candidateOK = false;
-
-      while (!candidateOK && tries < 500) {
-        tries++;
-        x = Math.random() * (maxX - minX) + minX;
-        y = Math.random() * (maxY - minY) + minY;
-
-        const candidateLeft = x;
-        const candidateRight = x + noRect.width;
-        const candidateTop = y;
-        const candidateBottom = y + noRect.height;
-
-        // Expand yes rect by margin
-        const yesLeftEx = yesRect.left - margin;
-        const yesRightEx = yesRect.right + margin;
-        const yesTopEx = yesRect.top - margin;
-        const yesBottomEx = yesRect.bottom + margin;
-
-        // comprobar colisión: true si se tocan/solapan
-        const overlap = !(candidateRight < yesLeftEx || candidateLeft > yesRightEx || candidateBottom < yesTopEx || candidateTop > yesBottomEx);
-
-        if (!overlap) {
-          candidateOK = true;
-        }
+      if (Math.abs(dx) < 140 && Math.abs(dy) < 110) {
+        dx = dx < 0 ? dx - 120 : dx + 120;
+        dy = dy < 0 ? dy - 120 : dy + 120;
       }
 
-      // si no encontró candidato tras muchos intentos, colocarlo en una esquina segura opuesta
-      if (!candidateOK) {
-        // si yes está en la mitad izquierda, llevar no a la derecha; sino izquierda.
-        const fallbackLeft = (yesRect.left < window.innerWidth / 2) ? window.innerWidth - noRect.width - 16 : 16;
-        const fallbackTop  = Math.min(Math.max(yesRect.top + yesRect.height + 12, 16), window.innerHeight - noRect.height - 16);
-        x = fallbackLeft;
-        y = fallbackTop;
+      noBtn.style.left = dx + "px";
+      noBtn.style.top = dy + "px";
+    }
+
+    function swapPositions() {
+      const tempLeft = yesBtn.style.left;
+      const tempTop = yesBtn.style.top;
+
+      yesBtn.style.left = noBtn.style.left;
+      yesBtn.style.top = noBtn.style.top;
+
+      noBtn.style.left = tempLeft;
+      noBtn.style.top = tempTop;
+    }
+
+    noBtn.addEventListener("click", () => {
+      clickNo++;
+
+      // Cambiar frase sin romper nada
+      fraseIndex = (fraseIndex + 1) % frases.length;
+      mainText.textContent = frases[fraseIndex];
+
+      // CLIC 8 → Intercambiar
+      if (clickNo === 8) {
+        swapPositions();
+        return;
       }
 
-      // aseguramos que no salga del viewport (clamp)
-      const clamped = clampPositionWithinViewport(x, y, noRect.width, noRect.height, 8);
-      noBtn.style.left = `${clamped.left}px`;
-      noBtn.style.top  = `${clamped.top}px`;
+      // CLIC 9 → Volver a intercambiar y restaurar comportamiento normal
+      if (clickNo === 9) {
+        swapPositions();
+        return;
+      }
 
-      // pequeña animación "pop" al teleport
-      noBtn.animate([{ opacity: 0, transform: `scale(${noScale + 0.15})` }, { opacity: 1, transform: `scale(${noScale})` }], { duration: 240 });
-    }
-
-    /************************************************************************
-     * Swap visual de posiciones entre YES y NO
-     * - Intercambia left/top entre los dos elementos.
-     * - Mantiene listeners (no se clonan nodos).
-     ************************************************************************/
-    function swapPositionsVisual() {
-      initFixedPositionsOnce();
-
-      // tomar coords actuales
-      const yesRect = getViewportRect(yesBtn);
-      const noRect  = getViewportRect(noBtn);
-
-      // intercambiar
-      const newYesLeft = noRect.left;
-      const newYesTop  = noRect.top;
-      const newNoLeft  = yesRect.left;
-      const newNoTop   = yesRect.top;
-
-      yesBtn.style.left = `${newYesLeft}px`;
-      yesBtn.style.top  = `${newYesTop}px`;
-
-      noBtn.style.left  = `${newNoLeft}px`;
-      noBtn.style.top   = `${newNoTop}px`;
-
-      currentlySwapped = !currentlySwapped;
-
-      // feedback visual
-      btnArea.animate([{ transform: 'translateY(-6px)' }, { transform: 'translateY(0)' }], { duration: 160 });
-    }
-
-    /************************************************************************
-     * Restore original positions (visual)
-     ************************************************************************/
-    function restoreOriginalPositionsVisual() {
-      if (!originalPos.yes || !originalPos.no) return;
-      // colocar en las posiciones guardadas
-      yesBtn.style.left = `${originalPos.yes.left}px`;
-      yesBtn.style.top  = `${originalPos.yes.top}px`;
-      noBtn.style.left  = `${originalPos.no.left}px`;
-      noBtn.style.top   = `${originalPos.no.top}px`;
-
-      currentlySwapped = false;
-
-      btnArea.animate([{ transform: 'translateY(6px)' }, { transform: 'translateY(0)' }], { duration: 160 });
-    }
-
-    /************************************************************************
-     * EVENTOS PRINCIPALES
-     ************************************************************************/
-
-    // CLICK "SÍ"
-    yesBtn.addEventListener('click', () => {
-      // efecto original: ocultar botones, fondo blanco y mensaje final
-      yesBtn.style.display = 'none';
-      noBtn.style.display = 'none';
-      titulo.style.display = 'none';
-      document.body.style.background = '#ffffff';
-
-      mensaje.innerHTML = "<br>Jjaksjkasj ... Sabía que me perdonarías te quiero mucho <3 ...<br><br>";
-
-      const img = document.createElement('img');
-      img.src = 'imagen_final.png'; // asegúrate de que exista o cambia la ruta
-      img.style.width = '180px';
-      img.style.display = 'block';
-      img.style.margin = '0 auto 15px auto';
-      mensaje.prepend(img);
+      // Después del click 9 → El "No" vuelve a moverse pero SIN acercarse al "Sí"
+      if (clickNo > 9) {
+        moveNoSafely();
+      }
     });
 
-    // CLICK "NO"
-    noBtn.addEventListener('click', (ev) => {
-      clicksNo++;
+    yesBtn.addEventListener("click", () => {
+      mainText.textContent = "¡Sabía que dirías que sí! 😎💖";
 
-      // 1) mostrar frase SIN repetir (se hace antes de cualquier swap)
-      showNextPhrase();
-
-      // 2) escalas (mantener comportamiento original)
-      yesScale = +(yesScale + 0.08).toFixed(3);
-      yesBtn.style.transform = `scale(${yesScale})`;
-
-      noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
-      noBtn.style.transform = `scale(${noScale})`;
-
-      // 3) oscurecer fondo rosa progresivamente
-      let current = document.body.dataset.pinkLevel ? Number(document.body.dataset.pinkLevel) : 220;
-      current = Math.max(current - 8, 120);
-      document.body.dataset.pinkLevel = current;
-      root.style.setProperty('--bg-pink', current.toString());
-
-      // 4) movimiento aleatorio sin superponer
-      // Si el click corresponde a swap (8 o 9) haremos swap visual en vez de "huida"
-      if (clicksNo === SWAP_CLICK_1) {
-        // antes de swap, capturamos posiciones actuales reales (por si hubo resize antes)
-        const yesRect = getViewportRect(yesBtn);
-        const noRect  = getViewportRect(noBtn);
-
-        originalPos.yes = { left: yesRect.left, top: yesRect.top, width: yesRect.width, height: yesRect.height };
-        originalPos.no  = { left: noRect.left,  top: noRect.top,  width: noRect.width,  height: noRect.height };
-
-        swapPositionsVisual();
-      } else if (clicksNo === SWAP_CLICK_2) {
-        // volver a posiciones originales
-        restoreOriginalPositionsVisual();
-      } else {
-        // comportamiento normal: huir evitando yes
-        moveNoAvoidYes();
-      }
-
-      // 5) si ya se acabaron las frases, ocultamos/no más
-      // (esto se maneja en showNextPhrase; aquí solo se deja un control opcional)
-      // if (frases.length === 0) { noBtn.style.display = 'none'; }
-    });
-
-    /************************************************************************
-     * Manejo de resize
-     * - Si el usuario cambia el tamaño de la ventana, recalculamos
-     *   posiciones guardadas y garantizamos que botones queden dentro.
-     ************************************************************************/
-    let resizeTimeout = null;
-    window.addEventListener('resize', () => {
-      // Debounce
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        // Si jamás inicializamos fixed, no hacemos nada
-        if (!initializedFixed) return;
-
-        // Recalcular originales según el layout actual: colocamos ambos elementos
-        // temporalmente en sus posiciones visuales actuales (ya fixed), y actualizamos originalPos.
-        const yesRect = getViewportRect(yesBtn);
-        const noRect  = getViewportRect(noBtn);
-
-        // actualizar originalPos si no estamos swapped, o respetar la intención:
-        originalPos.yes = { left: yesRect.left, top: yesRect.top, width: yesRect.width, height: yesRect.height };
-        originalPos.no  = { left: noRect.left,  top: noRect.top,  width: noRect.width,  height: noRect.height };
-
-        // Asegurarnos de que no queden fuera de la ventana
-        const clampedYes = clampPositionWithinViewport(originalPos.yes.left, originalPos.yes.top, originalPos.yes.width, originalPos.yes.height, 8);
-        const clampedNo  = clampPositionWithinViewport(originalPos.no.left, originalPos.no.top, originalPos.no.width, originalPos.no.height, 8);
-
-        yesBtn.style.left = `${clampedYes.left}px`;
-        yesBtn.style.top  = `${clampedYes.top}px`;
-        noBtn.style.left  = `${clampedNo.left}px`;
-        noBtn.style.top   = `${clampedNo.top}px`;
-      }, 140);
-    });
-
-    /************************************************************************
-     * Inicial: esperamos a que el layout esté listo, luego fijamos coords
-     ************************************************************************/
-    window.addEventListener('load', () => {
-      // pequeña demora intencional para que fuentes y layout terminen
+      // ELIMINAR EL NO AL FINAL
+      noBtn.style.animation = "fadeOut 0.7s forwards";
       setTimeout(() => {
-        // colocar el noBtn inicialmente al lado del yesBtn (si aún no ha sido movido)
-        const yesRect = getViewportRect(yesBtn);
-        const noRect = getViewportRect(noBtn);
-
-        // Si el noBtn aún no tiene posición left/top, colócalo justo a la derecha del yes
-        if (!noBtn.style.left || !noBtn.style.top) {
-          const defaultLeft = Math.min(window.innerWidth - noRect.width - 12, yesRect.right + 8);
-          const defaultTop  = yesRect.top;
-          noBtn.style.left = `${defaultLeft}px`;
-          noBtn.style.top  = `${defaultTop}px`;
-        }
-
-        // Guardar posiciones originales (tomadas desde viewport)
-        originalPos.yes = getViewportRect(yesBtn);
-        originalPos.no  = getViewportRect(noBtn);
-
-        // Notar: no forzamos conversion a fixed aquí; se hará al primer movimiento
-      }, 60);
+        noBtn.remove();
+      }, 700);
     });
 
-    /************************************************************************
-     * Nota final:
-     * - Si quieres volver al comportamiento DOM-swap (cambiar orden en el wrapper)
-     *   en lugar de swap visual por coordenadas, lo puedo cambiar fácilmente.
-     * - Este enfoque (swap visual por coords) preserva los event listeners.
-     ************************************************************************/
   </script>
+
 </body>
 </html>
