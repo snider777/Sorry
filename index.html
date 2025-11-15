@@ -20,7 +20,7 @@
     }
 
     h1 {
-      color: #ff4d88;
+      color: #0d0045;
       font-size: 2.3rem;
       margin-bottom: 30px;
     }
@@ -41,11 +41,11 @@
     }
 
     #yesBtn {
-      background-color: #ff99c8;
+      background-color: #7bff00;
     }
 
     #noBtn {
-      background-color: #b3b3b3;
+      background-color: #ff0000;
     }
 
     #mensaje {
@@ -77,15 +77,15 @@
     let noScale = 1;
 
     let frases = [
-      "En serio lo lamento :c",
-      "Fue tan grave lo que hice??? :c",
+      "En serio lo lamento :c ... Me perdonas???",
+      "De verdad perdón por lo que hice :c",
       "Pq le sigues dando al no ...",
       "Ya basta :c",
       "Please forgive me ... I really care about you :c",
       "Ich mache das wirklich und mache es immer noch ... Tatsächlich habe ich es von Anfang an getan :)﻿",
       "Okeeey ... Lo de hablar en otros idiomas tampoco te convence??? :c",
       "Intentémos de nuevo ... Me perdonas??? :c",
-      "Jasjaskj no caíste en lo de cambiar los botones eh??? ... Admite que fue un buen intento :)... Me perdonas???",
+      "Sabes ... En la Biblia se nos habla del perdón ... Te gustaría practicarlo conmigo???",
       "Todo el punto de este código es que me perdones :c ...Puedes hacerlo porfa :)???",
       "Vamos ... Me alegrarías el día ... La semana ... El mes ... Y el resto del año skjkajs :)",
       "Te lo pido una última vez ... Me perdonas??? :c",
@@ -93,8 +93,12 @@
       "En serio esta es la última vez ... Me perdonas???",
       "Porfa hazlo ... Escribir cansa :c ... Me perdonas???",
       "PORFAAAAAAAAAAAAAAAAAAAAAAAAAA ... Perdóname :c",
-      "Bueno no me dejas opción",
-      "Jajksajk ... Me perdonas??? :)"
+      "Bueno no me dejas opción ... Me perdonas???",
+      "Jajksajk ... Me perdonas??? :)",
+      "Sé que te estás convenciendo :)",
+      "En serio no lo harás??? :c",
+      "Te prometo que no vuelve a pasar ...",
+      "Bueno ... Última oportunidad ... Me perdonas???"
     ];
 
     // Evento al presionar SÍ
@@ -176,7 +180,7 @@
         mensaje.innerHTML = frases[0];
         frases.splice(0, 1);
       } else {
-        mensaje.innerHTML = "Esta era mi última opción jajaja ...";
+        mensaje.innerHTML = "No quería llegar a esto ... Esta era mi última opción jajaja ... Te reduje las opciones :) ... Por favor ... Me perdonas??? :c";
         noBtn.style.display = "none";
       }
     };
