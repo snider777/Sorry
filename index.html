@@ -69,6 +69,30 @@
   <div id="mensaje"></div>
 
   <script>
+
+    /* ===========================================================
+       🌈 LISTA DE COLORES TOTALMENTE LIBRE
+       =========================================================== */
+
+    const coloresFondo = [
+      "#ffe6f2", // rosa suave
+      "#add8e6", // celestito
+      "#90ee90", // verde claro
+      "#fff68f", // amarillo pastel
+      "#dab6ff", // lila
+      "#ff9e9e", // rojo pastel
+      "#c4ffe8", // turquesa suave
+      "#ffd19a"  // durazno
+    ];
+
+    let indexColor = 0;
+
+
+
+    /* ===========================================================
+       RESTO DEL CÓDIGO (NO ALTERADO)
+       =========================================================== */
+
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const mensaje = document.getElementById('mensaje');
@@ -116,7 +140,7 @@
       `;
 
       const img = document.createElement("img");
-      img.src = "imagen_final.png";  // <-- tu imagen
+      img.src = "imagen_final.png";
       img.style.width = "180px";
       img.style.display = "block";
       img.style.margin = "0 auto 15px auto";
@@ -126,6 +150,11 @@
 
     // Evento al presionar NO
     noBtn.onclick = () => {
+
+      /* 🌈 Cambio de color libre */
+      indexColor = (indexColor + 1) % coloresFondo.length;
+      document.body.style.background = coloresFondo[indexColor];
+
       // Hacer más grande el SÍ
       yesScale = +(yesScale + 0.08).toFixed(3);
       yesBtn.style.transform = `scale(${yesScale})`;
@@ -133,15 +162,6 @@
       // Hacer más pequeño el NO
       noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
       noBtn.style.transform = `scale(${noScale})`;
-
-      // Fondo rosa más oscuro
-      let current = document.body.dataset.pinkLevel
-        ? Number(document.body.dataset.pinkLevel)
-        : 220;
-
-      current = Math.max(current - 8, 120);
-      document.body.dataset.pinkLevel = current;
-      document.body.style.background = `rgb(255, ${current}, ${current})`;
 
       // Teletransportar NO sin chocar con SÍ
       const noRect = noBtn.getBoundingClientRect();
@@ -175,7 +195,7 @@
         { duration: 300, easing: "ease-out" }
       );
 
-      // Frases en orden
+      // Frases
       if (frases.length > 0) {
         mensaje.innerHTML = frases[0];
         frases.splice(0, 1);
