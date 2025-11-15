@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #ffe6f2;
+      background: #33fffc;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -54,8 +54,13 @@
     #mensaje {
       margin-top: 20px;
       font-size: 1.1rem;
-      color: #000;
+      color: #fff; /* texto blanco para contrastar con cualquier fondo */
       min-height: 30px;
+      text-shadow: 
+         -1px -1px 0 #000,  
+          1px -1px 0 #000,
+         -1px  1px 0 #000,
+          1px  1px 0 #000; /* contorno negro */
     }
   </style>
 </head>
