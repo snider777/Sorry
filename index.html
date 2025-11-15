@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>¿Me perdonas?</title>
+
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -15,6 +16,7 @@
       height: 100vh;
       margin: 0;
       text-align: center;
+      transition: background 0.3s ease;
     }
 
     h1 {
@@ -35,7 +37,7 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: 0.25s ease;
     }
 
     #yesBtn {
@@ -54,6 +56,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <h1>Me perdonas??? :c</h1>
@@ -70,7 +73,6 @@
     const noBtn = document.getElementById('noBtn');
     const mensaje = document.getElementById('mensaje');
 
-    // Escalas controladas (valores numéricos para evitar depender de fontSize/width)
     let yesScale = 1;
     let noScale = 1;
 
@@ -92,84 +94,90 @@
       "Porfa hazlo ... Escribir cansa :c ... Me perdonas???",
       "PORFAAAAAAAAAAAAAAAAAAAAAAAAAA ... Perdóname :c",
       "Bueno no me dejas opción",
-      "Jajksajk ... Me perdonas??? :)",
+      "Jajksajk ... Me perdonas??? :)"
     ];
 
-    // Cuando el usuario presione SÍ (solo confirma)
+    // Evento al presionar SÍ
     yesBtn.onclick = () => {
-      // Ocultar botones
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
 
-      // Ocultar pregunta y carita
       const titulo = document.querySelector('h1');
       if (titulo) titulo.style.display = "none";
 
-      // Fondo blanco
       document.body.style.background = "#ffffff";
 
-      // Mostrar mensaje final
-      mensaje.innerHTML = "<br>Jjaksjkasj ... Sabía que me perdonarías te quiero mucho <3 ...<br><br>";
+      mensaje.innerHTML = `
+        <br>Jjaksjkasj ... Sabía que me perdonarías te quiero mucho &lt;3<br><br>
+      `;
 
-      // Agregar imagen encima del texto
       const img = document.createElement("img");
-      img.src = "imagen_final.png";
+      img.src = "imagen_final.png";  // <-- tu imagen
       img.style.width = "180px";
       img.style.display = "block";
       img.style.margin = "0 auto 15px auto";
-      img.style.animation = "aparecer 0.5s ease-out";
 
       mensaje.prepend(img);
     };
 
-    // Cuando el usuario presione NO
+    // Evento al presionar NO
     noBtn.onclick = () => {
-      // Incrementar escala de SÍ
+      // Hacer más grande el SÍ
       yesScale = +(yesScale + 0.08).toFixed(3);
-      yesBtn.style.transform = scale(${yesScale});
+      yesBtn.style.transform = `scale(${yesScale})`;
 
-      // Reducir escala de NO
+      // Hacer más pequeño el NO
       noScale = Math.max(+(noScale - 0.08).toFixed(3), 0.32);
-      noBtn.style.transform = scale(${noScale});
+      noBtn.style.transform = `scale(${noScale})`;
 
-      // Fondo rosa cada vez más oscuro
-      let current = document.body.dataset.pinkLevel ? Number(document.body.dataset.pinkLevel) : 220;
+      // Fondo rosa más oscuro
+      let current = document.body.dataset.pinkLevel
+        ? Number(document.body.dataset.pinkLevel)
+        : 220;
+
       current = Math.max(current - 8, 120);
       document.body.dataset.pinkLevel = current;
-      document.body.style.background = rgb(255, ${current}, ${current});
+      document.body.style.background = `rgb(255, ${current}, ${current})`;
 
-      // Mover NO aleatoriamente
+      // Teletransportar NO sin chocar con SÍ
       const noRect = noBtn.getBoundingClientRect();
-      const yesBox = yesBtn.getBoundingClientRect();
-      const bodyWidth = window.innerWidth;
-      const bodyHeight = window.innerHeight;
+      const yesRect = yesBtn.getBoundingClientRect();
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
       let x, y, attempts = 0;
+
       do {
-        x = Math.random() * (bodyWidth - noRect.width);
-        y = Math.random() * (bodyHeight - noRect.height - 20) + 10;
+        x = Math.random() * (width - noRect.width);
+        y = Math.random() * (height - noRect.height - 20) + 10;
         attempts++;
         if (attempts > 200) break;
-      } while (!(x + noRect.width < yesBox.left || x > yesBox.right || y + noRect.height < yesBox.top || y > yesBox.bottom));
+      } while (
+        !(x + noRect.width < yesRect.left ||
+          x > yesRect.right ||
+          y + noRect.height < yesRect.top ||
+          y > yesRect.bottom)
+      );
 
       noBtn.style.position = "absolute";
-      noBtn.style.left = ${x}px;
-      noBtn.style.top = ${y}px;
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
 
-      // Teletransporte visual
-      noBtn.animate([
-        { opacity: 0, transform: scale(${noScale + 0.2}) },
-        { opacity: 1, transform: scale(${noScale}) }
-      ], { duration: 300, easing: 'ease-out' });
+      noBtn.animate(
+        [
+          { opacity: 0, transform: `scale(${noScale + 0.2})` },
+          { opacity: 1, transform: `scale(${noScale})` }
+        ],
+        { duration: 300, easing: "ease-out" }
+      );
 
-     // Frases en orden
-  if (frases.length > 0) {
-    mensaje.innerHTML = frases[0];
-    frases.splice(0, 1); // Elimina la primera frase después de mostrarla
-  } else {
-    mensaje.innerHTML = "Esta era mi última opción jajaja ...";
-    noBtn.style.display = "none";
-  }
+      // Frases en orden
+      if (frases.length > 0) {
+        mensaje.innerHTML = frases[0];
+        frases.splice(0, 1);
+      } else {
+        mensaje.innerHTML = "Esta era mi última opción jajaja ...";
+        noBtn.style.display = "none";
       }
     };
   </script>
